@@ -15,16 +15,31 @@ Este projeto está dividido em duas partes:
 ## 🚀 Como Rodar
 
 1. **Backend**  
-   ```bash
-   cd clientes-app
+   
 
-   docker-compose up --build
+### 1 - Gerar chaves privada e publica 
+    ```
+    openssl genrsa -out private.pem 2048
+    openssl rsa -in private.pem -out public.pem
+      
+    Colar as chaves no 
+
+    JWT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----"
+    JWT_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----"
+
+    criar o arquivo .env copiar o .env.exemple para .env no backend 
+  
+    cd clientes-app  
+    docker-compose up --build
+    ```
 
 2. **FrontEnd**  
    ```bash
    cd front-clientes-app
 
    npm run dev
+  ```  
+   
 
 ### 🔑 Credenciais de Acesso (Front-end)
 
