@@ -14,7 +14,7 @@ criar o arquivo .env copiar o .env.exemple para .env
 
 # 2- Start app   realizada build docker 
 ```
-docker-compose build --no-cache
+docker-compose build 
 ```
 
 # Criar CRUD para modulo
