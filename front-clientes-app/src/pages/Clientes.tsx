@@ -105,9 +105,10 @@ export default function Clientes() {
   // if (loading) return <p>Carregando clientes...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-4">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-white shadow flex items-center justify-between px-4 py-3">
+       
         <div className="flex items-center gap-6">
           <img src="/logo-branco.png" alt="Logo" className="h-10 object-contain" />
           <nav className="flex gap-4 text-sm text-gray-700 items-center">
