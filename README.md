@@ -31,6 +31,7 @@ Este projeto está dividido em duas partes:
   
     cd clientes-app  
     docker-compose up --build
+    
     ```
 
 2. **FrontEnd**  
