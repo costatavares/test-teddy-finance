@@ -14,7 +14,7 @@ criar o arquivo .env copiar o .env.exemple para .env
 
 # 2- Start app   realizada build docker 
 ```
-docker-compose up --build
+docker-compose build --no-cache
 ```
 
 # Criar CRUD para modulo
@@ -22,6 +22,7 @@ docker-compose up --build
 nest generate resource <nome-módulo>
 ```
 
+docker exec -it <container_id> sh
 
 
 # reconstrução completa:

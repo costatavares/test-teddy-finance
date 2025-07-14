@@ -7,13 +7,18 @@ WORKDIR /app
 # Copie os arquivos de dependência
 COPY package*.json ./
 
+
 # Instala dependências e ferramentas necessárias
 RUN apk add --no-cache python3 make g++ \
   && npm install \
   && npm install --save-dev ts-node typescript @types/node
 
+  
 # Copie todo o código-fonte do projeto
 COPY . .
+  
+# copia o exemplo de env e já o renomeia
+RUN [ -f .env ] || cp .env.example .env
 
 # Exponha a porta usada pela aplicação
 EXPOSE 3000

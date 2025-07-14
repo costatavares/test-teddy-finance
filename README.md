@@ -12,7 +12,12 @@ Este projeto está dividido em duas partes:
 
 ---
 
-## 🚀 Como Rodar
+## 🚀 Como Rodar todo o projeto
+
+```
+docker-compose down --volumes --remove-orphans
+docker-compose up --build
+```
 
 1. **Backend**  
    

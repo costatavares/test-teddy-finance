@@ -1,0 +1,56 @@
+version: '3.8'
+services:
+  front:
+    container_name: front-clientes-app
+    build:
+      context: ./front-clientes-app
+      dockerfile: Dockerfile
+    volumes:
+      - ./front-clientes-app:/app
+      - /app/node_modules
+    ports:
+      - '5173:5173'
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    depends_on:
+      - api
+  
+  api:
+    build:
+      context: ./clientes-app
+      dockerfile: Dockerfile
+      
+    container_name: nest_cliente_api
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: cliente_db
+    volumes:
+      - ./clientes-app:/app
+      - /app/node_modules
+    command: npm run start:dev 
+
+  db:
+    image: postgres:15
+    container_name: postgres_cliente
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cliente_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
