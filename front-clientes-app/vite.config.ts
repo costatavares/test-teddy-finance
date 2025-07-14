@@ -8,5 +8,9 @@ export default defineConfig({
     host: true,        // aceita conexões externas
     port: 5173,        // porta já mapeada no Docker
     strictPort: true,  // falha se a porta estiver ocupada
+    fs: {
+      strict: true
+    }
   },
+  base: '/',
 })

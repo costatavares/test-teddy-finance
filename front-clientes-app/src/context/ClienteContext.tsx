@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 // Tipos
@@ -20,6 +20,7 @@ interface ClienteContextType {
 
   usuario: string;
   setUsuario: (nome: string) => void;
+  logout: () => void;
 }
 
 // Criação do contexto
@@ -38,7 +39,20 @@ export const useClientes = (): ClienteContextType => {
 export const ClienteProvider = ({ children }: { children: ReactNode }) => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [selecionados, setSelecionados] = useState<Cliente[]>([]);
-  const [usuario, setUsuario] = useState<string>("");
+
+  const [usuario, setUsuarioState] = useState<string>(() => {
+    return localStorage.getItem("usuario") || "";
+  });
+
+  const setUsuario = (nome: string) => {
+    localStorage.setItem("usuario", nome);
+    setUsuarioState(nome);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("usuario");
+    setUsuarioState("");
+  };
 
   return (
     <ClienteContext.Provider
@@ -49,6 +63,7 @@ export const ClienteProvider = ({ children }: { children: ReactNode }) => {
         setSelecionados,
         usuario,
         setUsuario,
+        logout,
       }}
     >
       {children}

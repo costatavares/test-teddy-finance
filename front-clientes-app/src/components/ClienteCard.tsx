@@ -1,24 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { useClienteStore } from '../store/clienteStore';
-
-// export function ClienteCard({ cliente }: { cliente: any }) {
-//   const { remover, atualizar, selecionar } = useClienteStore();
-
-//   return (
-//     <div className="border p-4 rounded shadow">
-//       <h3 className="font-bold">{cliente.nome}</h3>
-//       <p>Salário: R$ {cliente.salario}</p>
-//       <p>Empresa: R$ {cliente.valorEmpresa}</p>
-//       <div className="flex justify-between mt-2">
-//         <button onClick={() => selecionar(cliente.id)}>+</button>
-//         <button onClick={() => atualizar({ ...cliente, nome: cliente.nome + ' Atualizado' })}>✏️</button>
-//         <button onClick={() => remover(cliente.id)} className="text-red-500">🗑️</button>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 import { useState } from 'react';
 import { useClienteStore } from '../store/clienteStore';
 
@@ -27,6 +7,7 @@ type Cliente = {
   nome: string;
   salario: string;
   valorEmpresa: string;
+  selecionado?: boolean;
 };
 
 type Props = {
@@ -101,7 +82,9 @@ export function ClienteCard({ cliente }: Props) {
         <p>Salário: R$ {cliente.salario}</p>
         <p>Empresa: {cliente.valorEmpresa}</p>
         <div className="flex justify-between mt-2">
-          <button onClick={() => selecionar(cliente.id)}>✔️</button>
+          <button onClick={() => selecionar(cliente.id)}>
+            {cliente.selecionado ? '✔️' : '❌'}
+          </button>
           <button onClick={() => setEditando(cliente)}>✏️</button>
           <button
             onClick={() => setConfirmDelete(true)}

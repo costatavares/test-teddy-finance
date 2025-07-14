@@ -2,8 +2,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useClienteStore } from '../store/clienteStore';
 import { ClienteCard } from '../components/ClienteCard';
+import { useClientes } from '../context/ClienteContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Clientes() {
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const { clientes, setClientes, adicionar } = useClienteStore();
   const [loading, setLoading] = useState(true);
@@ -13,6 +16,8 @@ export default function Clientes() {
   const [salario, setSalario] = useState('');
   const [empresa, setEmpresa] = useState('');
   const [erro, setErro] = useState('');
+
+  const { logout, usuario } = useClientes();
 
   useEffect(() => {
     if (carregado.current) return;
@@ -51,6 +56,11 @@ export default function Clientes() {
   function handleAdicionar() {
     setShowForm(!showForm);
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -92,7 +102,7 @@ export default function Clientes() {
     }
   }
 
-  if (loading) return <p>Carregando clientes...</p>;
+  // if (loading) return <p>Carregando clientes...</p>;
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-4">
@@ -103,10 +113,10 @@ export default function Clientes() {
           <nav className="flex gap-4 text-sm text-gray-700 items-center">
             <a href="/clientes" className="text-orange-500 font-semibold">Clientes</a>
             <a href="/selecionados">Clientes selecionados</a>
-            <a href="/logout">Sair</a>
+            <button onClick={handleLogout} className="text-red-500 hover:underline">Sair</button>
           </nav>
         </div>
-        <span className="text-sm text-gray-700">Olá, <strong>Usuário!</strong></span>
+        <span className="text-sm text-gray-700">Olá, <strong>{usuario}</strong></span>
       </header>
 
       {/* Info + Filtro */}

@@ -1,37 +1,3 @@
-// // store/clienteStore.ts
-// import { create } from 'zustand';
-
-// export interface Cliente {
-//   id: string;
-//   nome: string;
-//   salario: number;
-//   empresa: string;
-//   selecionado?: boolean;
-// }
-
-// interface ClienteStore {
-//   clientes: Cliente[];
-//   setClientes: (clientes: Cliente[]) => void;
-//   adicionar: (cliente: Cliente) => void;
-//   limpar: () => void;
-// }
-
-// export const useClienteStore = create<ClienteStore>((set, get) => ({
-//   clientes: [],
-
-//   setClientes: (novosClientes) => set({ clientes: novosClientes }),
-
-//   adicionar: (novo) => {
-//     const existentes = get().clientes;
-//     const jaExiste = existentes.some(c => c.id === novo.id);
-//     if (!jaExiste) {
-//       set({ clientes: [...existentes, novo] });
-//     }
-//   },
-
-//   limpar: () => set({ clientes: [] }),
-// }));
-
 import { create } from 'zustand';
 
 export type Cliente = {
@@ -49,9 +15,10 @@ type ClienteStore = {
   atualizar: (clienteAtualizado: Cliente) => void;
   remover: (id: string) => void;
   selecionar: (id: string) => void;
+  // getSelecionados: () => Cliente[]; // <-- Novo método
 };
 
-export const useClienteStore = create<ClienteStore>((set) => ({
+export const useClienteStore = create<ClienteStore>((set, get) => ({
   clientes: [],
 
   setClientes: (clientes) => set(() => ({ clientes })),
@@ -74,9 +41,18 @@ export const useClienteStore = create<ClienteStore>((set) => ({
     })),
 
   selecionar: (id) =>
-    set((state) => ({
-      clientes: state.clientes.map((c) =>
-        c.id === id ? { ...c, selecionado: !c.selecionado } : c
-      ),
-    })),
+    // set((state) => ({
+    //   clientes: state.clientes.map((c) =>
+    //     c.id === id ? { ...c, selecionado: !c.selecionado } : c
+    //   ),
+    // })),
+    set((state) => {
+    const atualizados = state.clientes.map((c) =>
+      c.id === id ? { ...c, selecionado: !c.selecionado } : c
+    );
+
+    console.log(`Cliente ${id} atualizado:`, atualizados.find(c => c.id === id));
+
+    return { clientes: atualizados };
+  })
 }));
