@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -61,6 +62,9 @@ export class ClienteService {
   async update(id: string, dto: UpdateClienteDto) {
     const cliente = await this.findOne(id);
     Object.assign(cliente, dto);
+    if (dto.selecionado !== undefined) {
+      dto.selecionado ? cliente.activated() : cliente.desactivated();
+    }
     return this.clienteRepo.save(cliente);
   }
 

@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 import { useClienteStore } from '../store/clienteStore';
 import { ClienteCard } from '../components/ClienteCard';
 import { useClientes } from '../context/ClienteContext';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate } from 'react-router-dom';
+import { NumericFormat } from 'react-number-format'; 
+import ClienteService from '../services/clienteService';
+import { Header } from '../components/Header';
 
 export default function Clientes() {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
-  const { clientes, setClientes, adicionar } = useClienteStore();
-  const [loading, setLoading] = useState(true);
-  const carregado = useRef(false);
+  const { clientes, adicionar } = useClienteStore();
+  
 
   const [nome, setNome] = useState('');
   const [salario, setSalario] = useState('');
@@ -19,39 +21,8 @@ export default function Clientes() {
 
   const { logout, usuario } = useClientes();
 
-  useEffect(() => {
-    if (carregado.current) return;
-    carregado.current = true;
-
-    async function fetchClientes() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('Token não encontrado.');
-        return;
-      }
-
-      try {
-        const response = await fetch('http://localhost:3000/cliente?page=1&perPage=10', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Erro: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setClientes(data.data); // evita duplicação
-      } catch (error) {
-        console.error('Erro ao buscar clientes:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchClientes();
-  }, [setClientes]);
+  ClienteService();
+  
 
   function handleAdicionar() {
     setShowForm(!showForm);
@@ -102,24 +73,15 @@ export default function Clientes() {
     }
   }
 
+ 
+
   // if (loading) return <p>Carregando clientes...</p>;
 
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-white shadow flex items-center justify-between px-4 py-3">
-       
-        <div className="flex items-center gap-6">
-          <img src="/logo-branco.png" alt="Logo" className="h-10 object-contain" />
-          <nav className="flex gap-4 text-sm text-gray-700 items-center">
-            <a href="/clientes" className="text-orange-500 font-semibold">Clientes</a>
-            <a href="/selecionados">Clientes selecionados</a>
-            <button onClick={handleLogout} className="text-red-500 hover:underline">Sair</button>
-          </nav>
-        </div>
-        <span className="text-sm text-gray-700">Olá, <strong>{usuario}</strong></span>
-      </header>
-
+      <Header />
+      <div className="p-6">
       {/* Info + Filtro */}
       <div className="flex justify-between items-center mt-6 mb-4">
         <p className="text-base font-semibold">
@@ -186,21 +148,32 @@ export default function Clientes() {
                 onChange={(e) => setNome(e.target.value)}
                 required
                 />
-                <input
-                type="number"
-                placeholder="Salário"
-                className="w-full border rounded px-3 py-2"
-                value={salario}
-                onChange={(e) => setSalario(e.target.value)}
-                required
+                <NumericFormat
+                  value={salario}
+                  onValueChange={(e) => setSalario(e.value)} // ← valor limpo para POST
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
+                  placeholder="Salário R$"
+                  className="w-full border rounded px-3 py-2"
+                  required
                 />
-                <input
-                type="number"
-                placeholder="Empresa"
-                className="w-full border rounded px-3 py-2"
-                value={empresa}
-                onChange={(e) => setEmpresa(e.target.value)}
-                required
+
+                <NumericFormat
+                  value={empresa}
+                  onValueChange={(values) => setEmpresa(values.value)} // ← valor numérico limpo
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
+                  placeholder="Empresa R$"
+                  className="w-full border rounded px-3 py-2"
+                  required
                 />
                 <div className="flex justify-end gap-2">
                 <button
@@ -234,6 +207,7 @@ export default function Clientes() {
         <span>...</span>
         <button className="hover:underline">12</button>
       </div>
+       </div>
     </div>
   );
 }

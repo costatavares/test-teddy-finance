@@ -17,4 +17,12 @@ export class Cliente {
 
   @Column({ default: false })
   selecionado: boolean;
+
+  activated() {
+    this.selecionado = true;
+  }
+
+  desactivated() {
+    this.selecionado = false;
+  }
 }

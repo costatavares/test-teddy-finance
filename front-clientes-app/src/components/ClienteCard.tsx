@@ -1,26 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { useClienteStore } from '../store/clienteStore';
+import { NumericFormat } from 'react-number-format';
+import { useClienteStore, type Cliente } from '../store/clienteStore';
 
-type Cliente = {
-  id: string;
-  nome: string;
-  salario: string;
-  valorEmpresa: string;
-  selecionado?: boolean;
-};
 
 type Props = {
   cliente: Cliente;
 };
 
 export function ClienteCard({ cliente }: Props) {
-  const { atualizar, remover, selecionar } = useClienteStore();
+  const {atualizar, remover, selecionar } = useClienteStore();
   const [editando, setEditando] = useState<Cliente | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+   
 
   async function handleUpdateSubmit(e: React.FormEvent) {
-      console.error('Editando cliente:', editando);
+    console.error('Editando cliente:', editando);
     e.preventDefault();
     if (!editando) return;
 
@@ -38,12 +33,47 @@ export function ClienteCard({ cliente }: Props) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-            nome: editando.nome,
-            salario: parseFloat(editando.salario),
-            valorEmpresa: parseFloat(editando.valorEmpresa),
+          nome: editando.nome,
+          salario: parseFloat(editando.salario),
+          valorEmpresa: parseFloat(editando.valorEmpresa),
+          ...(typeof editando.selecionado === 'boolean' && { selecionado: editando.selecionado }),  
         }),
       });
 
+      if (!res.ok) throw new Error('Erro ao atualizar');
+
+      const atualizado = await res.json();
+      atualizar(atualizado);
+      setEditando(null);
+    } catch (err: any) {
+      alert(err.message || 'Erro desconhecido');
+    }
+  }
+
+  async function handleUpdate(cliente: Cliente) {
+    selecionar(cliente.id);
+    const clienteSelecionado = useClienteStore.getState().getClienteById(cliente.id);
+    
+
+    if (!cliente.id) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) return alert('Token não encontrado');
+
+    const editandoId = clienteSelecionado?.id;
+    if (!editandoId) return alert('ID do cliente não encontrado'); 
+    
+    try {
+      const res = await fetch(`http://localhost:3000/cliente/${editandoId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          selecionado: clienteSelecionado.selecionado ,  
+        }),
+      });       
       if (!res.ok) throw new Error('Erro ao atualizar');
 
       const atualizado = await res.json();
@@ -79,16 +109,39 @@ export function ClienteCard({ cliente }: Props) {
     <>
       <div className="border p-4 rounded shadow bg-white">
         <h3 className="font-bold">{cliente.nome}</h3>
-        <p>Salário: R$ {cliente.salario}</p>
-        <p>Empresa: {cliente.valorEmpresa}</p>
+        <p>
+          Salário:{' '}
+          <NumericFormat
+            value={cliente.salario}
+            displayType="text"
+            thousandSeparator="."
+            decimalSeparator=","
+            prefix="R$ "
+            decimalScale={2}
+            fixedDecimalScale
+          />
+        </p>
+        <p>
+          Empresa:{' '}
+          <NumericFormat
+            value={cliente.valorEmpresa}
+            displayType="text"
+            thousandSeparator="."
+            decimalSeparator=","
+            prefix="R$ "
+            decimalScale={2}
+            fixedDecimalScale
+          />
+        </p>
         <div className="flex justify-between mt-2">
-          <button onClick={() => selecionar(cliente.id)}>
+          <button onClick={() => handleUpdate(cliente)} title='selecionar' className="text-blue-500 hover:underline">
             {cliente.selecionado ? '✔️' : '❌'}
           </button>
-          <button onClick={() => setEditando(cliente)}>✏️</button>
+          <button onClick={() => setEditando(cliente)} title='editar'>✏️</button>
           <button
             onClick={() => setConfirmDelete(true)}
             className="text-red-500"
+            title='excluir'
           >
             🗑️
           </button>
@@ -118,29 +171,42 @@ export function ClienteCard({ cliente }: Props) {
                 }
                 required
               />
-              <input
-                type="text"
-                className="w-full border px-3 py-2 rounded"
+
+              <NumericFormat
                 value={editando.salario}
-                onChange={(e) =>
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="R$ "
+                decimalScale={2}
+                fixedDecimalScale
+                allowNegative={false}
+                className="w-full border px-3 py-2 rounded"
+                placeholder="Salário R$"
+                onValueChange={(values) =>
                   setEditando({
                     ...editando,
-                    salario: e.target.value,
+                    salario: values.value, // salva só número limpo: 3500.00
                   })
                 }
                 required
               />
-              <input
-                type="text"
-                className="w-full border px-3 py-2 rounded"
+              
+              <NumericFormat
                 value={editando.valorEmpresa}
-                onChange={(e) =>
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="R$ "
+                decimalScale={2}
+                fixedDecimalScale
+                allowNegative={false}
+                className="w-full border px-3 py-2 rounded"
+                placeholder="Empresa R$"
+                onValueChange={(values) =>
                   setEditando({
                     ...editando,
-                    valorEmpresa: e.target.value,
+                    valorEmpresa: values.value,
                   })
                 }
-                required
               />
               <div className="flex justify-end gap-2">
                 <button

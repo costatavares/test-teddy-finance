@@ -15,4 +15,6 @@ export class CreateClienteDto {
   @IsNumber({}, { message: 'O valor da empresa deve ser um número' })
   @Min(0, { message: 'O valor da empresa deve ser no mínimo 0' })
   valorEmpresa: number;
+
+  // selecionado?: boolean; // Campo opcional para seleção
 }

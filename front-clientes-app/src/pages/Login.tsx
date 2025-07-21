@@ -53,6 +53,7 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-2 border rounded mb-4"
           required
+          autoComplete="new-password"
         />
 
         {erro && <div className="text-red-500 mb-2 text-sm">{erro}</div>}
