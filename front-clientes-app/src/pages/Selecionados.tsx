@@ -1,11 +1,9 @@
 import { useClienteStore} from '../store/clienteStore';
-import { useNavigate } from 'react-router-dom';
 import { ClienteCard } from '../components/ClienteCard';
 import { useEffect, useRef } from 'react';
 import { Header } from '../components/Header';
 
 export default function Selecionados() {
-  const navigate = useNavigate();
   const carregado = useRef(false);
   const { setClientes } = useClienteStore();
        
@@ -53,14 +51,8 @@ export default function Selecionados() {
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">
-            {selecionados.length} {selecionados.length > 1 ? 'clientes selecionados' : 'cliente selecionado'}
-          </h2>
-          <button
-            onClick={() => navigate('/clientes')}
-            className="text-orange-500 hover:underline"
-          >
-            Voltar
-          </button>
+            {selecionados.length > 1 ? 'clientes selecionados' : 'cliente selecionado'}
+          </h2>          
         </div>
 
         {/* Lista de clientes */}

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { useClienteStore, type Cliente } from '../store/clienteStore';
+import { useLocation } from 'react-router-dom';
 
 
 type Props = {
@@ -12,7 +13,10 @@ export function ClienteCard({ cliente }: Props) {
   const {atualizar, remover, selecionar } = useClienteStore();
   const [editando, setEditando] = useState<Cliente | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-   
+  
+  const location = useLocation();
+  const isActive = () =>
+    location.pathname === '/selecionados' ? 'md:hidden ':'';
 
   async function handleUpdateSubmit(e: React.FormEvent) {
     console.error('Editando cliente:', editando);
@@ -137,10 +141,10 @@ export function ClienteCard({ cliente }: Props) {
           <button onClick={() => handleUpdate(cliente)} title='selecionar' className="text-blue-500 hover:underline">
             {cliente.selecionado ? '✔️' : '❌'}
           </button>
-          <button onClick={() => setEditando(cliente)} title='editar'>✏️</button>
+          <button onClick={() => setEditando(cliente)} title='editar' className={isActive()} >✏️</button>
           <button
             onClick={() => setConfirmDelete(true)}
-            className="text-red-500"
+            className={`${isActive()} text-red-500`}
             title='excluir'
           >
             🗑️

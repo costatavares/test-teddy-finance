@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 // eslint-disable-next-line prettier/prettier
 import { IsNotEmpty, IsNumber, IsString, Min, MinLength } from "class-validator";
 
